@@ -1,8 +1,5 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.StringTokenizer;
 
 class Main {
@@ -12,20 +9,21 @@ class Main {
         int K = Integer.parseInt(st.nextToken());
         int N = Integer.parseInt(st.nextToken());
         int[] arr = new int[K];
-        List<Integer> li = new ArrayList<>(K-N+1);
+        int[] prefixSum = new int[K+1];
 
         st = new StringTokenizer(br.readLine());
         for(int i=0; i<K; i++){
             arr[i]=Integer.parseInt(st.nextToken());
+            prefixSum[i+1]=prefixSum[i]+arr[i];
         }
 
-        for(int i=0; i<K-N+1; i++){
-            int sum=0;
-            for(int n=i; n<i+N; n++){
-                sum+=arr[n];
-            }
-            li.add(sum);
+        int maxSum = Integer.MIN_VALUE;
+
+        for(int i=0; i<=K-N; i++){
+            int sum = prefixSum[i+N] - prefixSum[i];
+            if(sum>maxSum) maxSum =sum;
         }
-        System.out.println(Collections.max(li));
+
+        System.out.println(maxSum);
     }
 }
