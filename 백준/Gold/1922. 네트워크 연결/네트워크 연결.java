@@ -1,73 +1,72 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
+    static int[] parents;
+    static int V, E;
+    static class Edge implements Comparable<Edge>{
+        int from, to, cost;
 
-	static int N, M;
-	static int[] parents;
-	
-	static class Edge implements Comparable<Edge>{
-		int start, end, weight;
+        public Edge(int from, int to, int cost) {
+            this.from = from;
+            this.to = to;
+            this.cost = cost;
+        }
 
-		public Edge(int start, int end, int weight) {
-			super();
-			this.start = start;
-			this.end = end;
-			this.weight = weight;
-		}
+        @Override
+        public int compareTo(Edge o) {
+            return this.cost-o.cost;
+        }
+    }
 
-		@Override
-		public int compareTo(Edge o) {
-			return Integer.compare(this.weight, o.weight);
-		}
-	}
-	
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
-		N = Integer.parseInt(br.readLine());
-		M = Integer.parseInt(br.readLine());
-		
-		Edge[] edges = new Edge[M];
-		for(int i=0; i<M; i++) {
-			st = new StringTokenizer(br.readLine());
-			edges[i] = new Edge(Integer.parseInt(st.nextToken()) - 1, Integer.parseInt(st.nextToken()) - 1, Integer.parseInt(st.nextToken()));
-		}
-		
-		Arrays.sort(edges);
-		make();
-		int cnt=0, cost=0;
-		for(Edge e:edges) {
-			if(union(e.start, e.end)) {
-				cost+=e.weight;
-				if(++cnt == N-1) break;
-			}
-		}
-		System.out.println(cost);
-	}
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        V = Integer.parseInt(br.readLine().trim());
+        E = Integer.parseInt(br.readLine().trim());
+        make();
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        for(int i=0; i<E; i++){
+            st = new StringTokenizer(br.readLine());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            int cost = Integer.parseInt(st.nextToken());
+            pq.add(new Edge(from, to, cost));
+        }
 
-	static void make() {
-		parents = new int[N];
-		for(int i=0; i<N; i++) {
-			parents[i]=-1;
-		}
-	}
-	
-	static int findSet(int a) {
-		if(parents[a]<0) return a;
-		return parents[a] = findSet(parents[a]);
-	}
-	
-	static boolean union(int a, int b) {
-		int aRoot = findSet(a);
-		int bRoot = findSet(b);
-		if(aRoot == bRoot) return false;
-		
-		parents[aRoot] += parents[bRoot];
-		parents[bRoot] = aRoot;
-		return true;
-	}
+        int result=0;
+        while(!pq.isEmpty()){
+            Edge curr = pq.poll();
+            if(union(curr.from, curr.to)){
+                result+=curr.cost;
+            }
+
+        }
+        System.out.println(result);
+
+    }
+
+    static void make(){
+        parents = new int[V+1];
+        for(int i=1; i<=V; i++){
+            parents[i]=i;
+        }
+    }
+
+    static int find(int a){
+        if(parents[a]==a) return a;
+        return parents[a]=find(parents[a]);
+    }
+
+    static boolean union(int a, int b){
+        int aRoot = find(a);
+        int bRoot = find(b);
+        if(aRoot==bRoot) return false;
+
+        parents[aRoot]=bRoot;
+        return true;
+    }
 }
