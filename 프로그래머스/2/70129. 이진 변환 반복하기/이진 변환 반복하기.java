@@ -5,35 +5,26 @@ class Solution {
     
     public int[] solution(String s) {
         int[] answer = new int[2];
-        int cnt=0;
+        int zeroCnt=0;
+        int convertCnt=0;
         
         while(!s.equals("1")) {
-            String[] curr = removeZero(s);
+            String tmp = s.replace("0", "");
+
+            zeroCnt+=s.length()-tmp.length();
+            s=convertBinary(tmp.length());
             
-            answer[1] += Integer.parseInt(curr[1]);
-            s=convertBinary(curr[0]);
-            
-            cnt++;
+            convertCnt++;
         }
         
-        answer[0]=cnt;
+        answer[0] = convertCnt;
+        answer[1] = zeroCnt;
         
         return answer;
     }
     
-    static String[] removeZero(String s) {
+    static String convertBinary(int num) {
         sb = new StringBuilder();
-        int cnt=0;
-        for(int i=0; i<s.length(); i++) {
-            if(s.charAt(i)!='0') sb.append(s.charAt(i));
-            else cnt++;
-        }
-        return new String[]{sb.toString(), cnt+""};
-    }
-    
-    static String convertBinary(String str) {
-        sb = new StringBuilder();
-        int num = str.length();
         
         while(num>0) {
             sb.append(num%2);
